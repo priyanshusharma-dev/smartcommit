@@ -1,13 +1,8 @@
-**Here's a polished, professional, and resume-ready version** of your `README.md`:
-
----
-
-```markdown
 # SmartCommit 🤖
 
 **AI-Powered Git Commit Message Generator**
 
-A smart CLI tool that automatically generates high-quality **Conventional Commit** messages by analyzing your staged Git changes using a **local LLM** (Ollama).
+A smart CLI tool that automatically generates high-quality **Conventional Commit** messages by analyzing your staged Git changes using a local LLM (Ollama).
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![CLI](https://img.shields.io/badge/CLI-Typer-green)
@@ -18,9 +13,9 @@ A smart CLI tool that automatically generates high-quality **Conventional Commit
 
 ## 📖 Overview
 
-Writing meaningful commit messages is time-consuming. **SmartCommit** solves this by using local AI to analyze your code changes and generate clear, consistent, and professional Conventional Commit messages.
+Writing meaningful commit messages is time-consuming. **SmartCommit** solves this by using **local AI** (Ollama) to analyze your code changes and generate clear, consistent, and professional Conventional Commit messages.
 
-**Everything runs locally** — your code stays private.
+**Everything runs locally** — your code never leaves your machine.
 
 ---
 
@@ -28,23 +23,19 @@ Writing meaningful commit messages is time-consuming. **SmartCommit** solves thi
 
 - ⚡ Fast AI-powered commit message generation
 - 🔍 Analyzes only staged changes (`git diff --cached`)
-- 📏 Follows **Conventional Commits** specification
-- 🔒 Fully local (Ollama) — no data leaves your machine
-- 🎨 Beautiful terminal output with Rich
-- 🛠 Easy to install and use
-- 🧠 Smart fallback system
+- 📏 Strictly follows **Conventional Commits** specification
+- 🔒 Fully local & private (no cloud, no API keys)
+- 🎨 Beautiful terminal output using Rich
+- 🛠 Easy installation with `pip`
+- 🧠 Smart fallback when AI is slow
 
 ---
 
 ## 🚀 Quick Start
 
 ```bash
-# 1. Stage your changes
+# Stage your changes
 git add .
-
-# 2. Generate commit message
-smartcommit
-```
 
 **Example Output:**
 ```text
