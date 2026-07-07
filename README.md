@@ -37,6 +37,9 @@ Writing meaningful commit messages is time-consuming. **SmartCommit** solves thi
 # Stage your changes
 git add .
 
+# Generate commit message
+smartcommit
+
 **Example Output:**
 ```text
 feat(auth): add JWT authentication middleware
