@@ -148,9 +148,9 @@ All settings can be customized using environment variables or a `.env` file:
 |---|---|---|
 | `SMARTCOMMIT_DEFAULT_MODEL` | `llama3.2:3b` | Default Ollama model |
 | `SMARTCOMMIT_OLLAMA_HOST` | `http://localhost:11434` | Ollama server API URL |
-| `SMARTCOMMIT_MAX_DIFF_CHARS` | `8000` | Max characters of staged diff sent to AI |
-| `SMARTCOMMIT_AI_TIMEOUT_SECONDS` | `40` | Timeout before fallback engages |
-| `SMARTCOMMIT_MAX_LENGTH` | `72` | Max length of subject header |
+| `SMARTCOMMIT_MAX_DIFF_CHARS` | `4000` | Max characters of staged diff sent to AI |
+| `SMARTCOMMIT_AI_TIMEOUT_SECONDS` | `50` | Timeout before fallback engages |
+| `SMARTCOMMIT_MAX_LENGTH` | `120` | Max length of subject header |
 | `SMARTCOMMIT_USE_EMOJI` | `false` | Enable gitmoji prefixes by default |
 | `SMARTCOMMIT_DETAILED` | `false` | Enable detailed body messages by default |
 | `SMARTCOMMIT_INTERACTIVE` | `true` | Enable interactive action menu |

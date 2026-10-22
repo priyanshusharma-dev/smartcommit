@@ -24,8 +24,8 @@ class Settings(BaseSettings):
     ai_timeout_seconds: int = 50
     """How long to wait for Ollama before falling back to the rule-based generator."""
 
-    max_length: int = 72
-    """Max length of the commit subject line (Conventional Commits convention)."""
+    max_length: int = 120
+    """Max length of the commit subject line (allows full expressive Conventional Commits)."""
 
     use_emoji: bool = False
     """Prefix commit messages with a gitmoji matching their type."""

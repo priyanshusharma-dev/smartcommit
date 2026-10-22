@@ -27,10 +27,12 @@ Core Rules:
    - If changes span multiple domains evenly, omit scope or use a high-level domain.
 
 3. Subject Line:
+   - Provide a complete, expressive, and grammatically complete summary of the change.
    - Use the imperative mood ("add", "fix", "refactor", "optimize", "remove", NOT "added", "fixes", "implements").
    - Lowercase starting letter after the colon (e.g., "feat(cli): add interactive menu").
+   - NEVER stop mid-sentence or trail off. Never end on connector words like "and", "or", "with", "to".
+   - Aim for 50 to 100 characters. Keep it a single, complete, well-formed sentence.
    - No trailing period at the end of the subject.
-   - Max 72 characters (ideally 50-65 chars).
 
 4. Breaking Changes:
    - If the change breaks backward compatibility, append '!' immediately before the colon: feat(api)!: remove deprecated v1 endpoints
@@ -43,6 +45,8 @@ Core Rules:
    - Do NOT add polite preambles or explanations ("Here is your commit message:").
 
 High-Quality Examples:
+- feat: enhance commit message generation with detailed mode, candidate selection, and interactive workflows
+- fix(app): update global CSS to remove redundant imports and optimize responsive layout
 - feat(auth): add JWT bearer token authentication middleware
 - fix(git): handle missing git working tree gracefully without crashing
 - perf(parser): cache parsed AST trees to reduce re-indexing latency

@@ -164,8 +164,9 @@ def _build_prompt(
     else:
         prompt_parts.append(
             "Instructions for Commit Message:\n"
-            "- Provide ONLY a single subject line in format: <type>(<scope>): <description>\n"
-            "- Keep under 72 characters, lowercase start, imperative mood, no trailing period.\n"
+            "- Provide a complete, expressive single subject line: <type>(<scope>): <description>\n"
+            "- Express the full purpose clearly (aim for 50-100 characters). Ensure the sentence is complete and never cut off mid-thought.\n"
+            "- Lowercase start after colon, imperative mood, no trailing period, no dangling words.\n"
         )
 
     if count > 1:
@@ -278,14 +279,30 @@ def _generate_with_ai(
     return cleaned
 
 
+_DANGLING_ENDINGS = {
+    "and", "or", "to", "for", "with", "of", "in", "on",
+    "the", "a", "an", "by", "from", "at", "as", "that",
+    "which", "about", "into", "over", "after", "before",
+    "but", "so", "yet", "nor", "if", "then", "else",
+}
+
+
 def _truncate_header(header: str, max_len: int) -> str:
-    """Clamp header to max length without breaking words when possible."""
+    """Clamp header to max length without breaking words or leaving dangling connectors."""
     if len(header) <= max_len:
         return header
+
     truncated = header[:max_len]
     last_space = truncated.rfind(" ")
     if last_space > 25:
-        return truncated[:last_space].rstrip()
+        truncated = truncated[:last_space].rstrip(" ,;:-")
+
+    # Prevent ending on dangling conjunctions, prepositions, or articles
+    words = truncated.split()
+    while words and words[-1].lower() in _DANGLING_ENDINGS:
+        words.pop()
+        truncated = " ".join(words).rstrip(" ,;:-")
+
     return truncated
 
 

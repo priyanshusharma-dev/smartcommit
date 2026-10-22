@@ -10,7 +10,9 @@ from smartcommit.ai_generator import (
     _clean_message,
     _extract_candidates,
     _apply_emoji,
+    _truncate_header,
 )
+from smartcommit.config import settings
 from smartcommit.git_utils import StagedFile
 
 
@@ -56,7 +58,7 @@ def test_fallback_handles_no_staged_files():
 def test_fallback_respects_max_length():
     files = [StagedFile(status="M", path=f"file_{i}.py") for i in range(50)]
     message = generate_fallback_message(files)
-    assert len(message) <= 72
+    assert len(message) <= settings.max_length
 
 
 def test_fallback_infers_semantic_types_from_diff_content():
@@ -176,3 +178,18 @@ def test_apply_emoji():
     applied_multi = _apply_emoji(multi)
     assert applied_multi.startswith("🐛 fix(git): handle error")
     assert "- Details here" in applied_multi
+
+
+def test_truncate_header_removes_dangling_connectors():
+    # If cut off at 72, it would end with "and", but the new implementation strips dangling "and"
+    raw = "fix(app): update global CSS file to remove redundant imports and optimize page load performance"
+    truncated = _truncate_header(raw, max_len=72)
+    assert not truncated.endswith("and")
+    assert truncated == "fix(app): update global CSS file to remove redundant imports"
+
+
+def test_clean_message_preserves_full_expressive_subjects():
+    # Full 106-character message should be preserved completely without being cut off
+    expressive = "feat: enhance commit message generation with detailed mode, candidate selection, and interactive workflows"
+    cleaned = _clean_message(expressive)
+    assert cleaned == expressive
