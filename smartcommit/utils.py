@@ -1,26 +1,38 @@
-"""Small shared helpers: prompt loading and cross-platform clipboard support."""
+"""Small shared helpers: prompt loading, ANSI stripping, and clipboard support."""
 
 import platform
+import re
 import subprocess
 from pathlib import Path
 
+_ANSI_ESCAPE_PATTERN = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 
-def load_prompt() -> str:
-    """Load the system prompt that instructs the model, from prompts/conventional_prompt.txt.
 
-    Falls back to a minimal inline prompt if the file is missing so the tool
+def strip_ansi(text: str) -> str:
+    """Remove terminal ANSI escape sequences from raw string."""
+    return _ANSI_ESCAPE_PATTERN.sub("", text)
+
+
+def load_prompt(filename: str = "conventional_prompt.txt") -> str:
+    """Load the prompt instructions from prompts/<filename>.
+
+    Falls back to a built-in prompt if the file is missing so the tool
     still works from a partial install or a zipped/pip-installed package.
     """
-    prompt_path = Path(__file__).resolve().parent.parent / "prompts" / "conventional_prompt.txt"
+    prompt_path = Path(__file__).resolve().parent.parent / "prompts" / filename
 
     if prompt_path.exists():
         return prompt_path.read_text(encoding="utf-8").strip()
 
     return (
-        "You are an expert software engineer who writes excellent git commit "
-        "messages. Follow the Conventional Commits specification strictly. "
-        "Be clear, concise, and professional. Respond with ONLY the commit "
-        "message, no explanations or quotes."
+        "You are an expert software engineer following Conventional Commits 1.0.0.\n"
+        "Generate a clear, professional commit message for the git diff.\n"
+        "Rules:\n"
+        "- Format: <type>(<scope>): <description>\n"
+        "- Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore\n"
+        "- Scope: concise module name in lowercase\n"
+        "- Imperative mood, lowercase description, under 72 chars, no trailing period\n"
+        "- Respond with ONLY the commit message. No explanations or quotes."
     )
 
 
@@ -43,4 +55,4 @@ def copy_to_clipboard(text: str) -> bool:
             )
         return True
     except Exception:
-        return False
+        return False

@@ -53,11 +53,7 @@ def get_staged_diff() -> str:
 
 
 def get_staged_files() -> list[StagedFile]:
-    """Return the list of staged files with their status letters.
-
-    Used by the rule-based fallback to infer a sensible commit type/scope
-    when the AI backend is unavailable.
-    """
+    """Return the list of staged files with their status letters."""
     try:
         output = _run_git(["diff", "--cached", "--name-status"]).strip()
     except GitError:
@@ -72,3 +68,86 @@ def get_staged_files() -> list[StagedFile]:
         path = parts[-1]
         files.append(StagedFile(status=status, path=path))
     return files
+
+
+_NOISE_FILE_NAMES = {
+    "package-lock.json",
+    "yarn.lock",
+    "pnpm-lock.yaml",
+    "poetry.lock",
+    "cargo.lock",
+    "pipfile.lock",
+    "composer.lock",
+    "go.sum",
+    "gemfile.lock",
+    "flake.lock",
+}
+
+_NOISE_EXTENSIONS = (
+    ".min.js",
+    ".min.css",
+    ".map",
+    ".svg",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".gif",
+    ".ico",
+    ".webp",
+    ".wasm",
+)
+
+
+def get_diff_stat() -> str:
+    """Return the stat summary of currently staged changes, or '' if none/on error."""
+    try:
+        return _run_git(["diff", "--cached", "--stat"]).strip()
+    except GitError:
+        return ""
+
+
+def get_filtered_staged_diff(max_chars: int = 8000) -> tuple[str, list[str]]:
+    """Return a clean diff optimized for AI context, filtering out large lockfile noise.
+
+    Returns:
+        tuple[str, list[str]]: The processed diff string and a list of skipped noise file paths.
+    """
+    files = get_staged_files()
+    if not files:
+        return "", []
+
+    noise_files: list[str] = []
+    informative_files: list[str] = []
+
+    for f in files:
+        filename = f.path.split("/")[-1].lower()
+        if filename in _NOISE_FILE_NAMES or filename.endswith(_NOISE_EXTENSIONS):
+            noise_files.append(f.path)
+        else:
+            informative_files.append(f.path)
+
+    # If all files are noise files, don't exclude them completely
+    files_to_diff = informative_files if informative_files else [f.path for f in files]
+
+    try:
+        diff_text = _run_git(["diff", "--cached", "--", *files_to_diff]).strip()
+    except GitError:
+        diff_text = get_staged_diff()
+
+    if len(diff_text) > max_chars:
+        diff_text = diff_text[:max_chars].rstrip() + "\n\n[...diff truncated for context length...]"
+
+    return diff_text, noise_files
+
+
+def git_commit(message: str) -> tuple[bool, str]:
+    """Execute git commit with the given message.
+
+    Returns:
+        tuple[bool, str]: (Success status, stdout or error message)
+    """
+    try:
+        output = _run_git(["commit", "-m", message])
+        return True, output.strip()
+    except GitError as exc:
+        return False, str(exc)

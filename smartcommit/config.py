@@ -15,8 +15,11 @@ class Settings(BaseSettings):
     default_model: str = "llama3.2:3b"
     """Ollama model used when --model isn't passed on the CLI."""
 
-    max_diff_chars: int = 6000
-    """Max characters of the diff sent to the AI (keeps prompts fast/cheap)."""
+    ollama_host: str = "http://localhost:11434"
+    """Base URL for the local Ollama server HTTP API."""
+
+    max_diff_chars: int = 4000
+    """Max characters of the diff sent to the AI (keeps prompts fast/informative)."""
 
     ai_timeout_seconds: int = 50
     """How long to wait for Ollama before falling back to the rule-based generator."""
@@ -26,6 +29,12 @@ class Settings(BaseSettings):
 
     use_emoji: bool = False
     """Prefix commit messages with a gitmoji matching their type."""
+
+    detailed: bool = False
+    """Generate detailed multi-line commit messages with body and bullet points."""
+
+    interactive: bool = True
+    """Prompt interactively to commit, edit, or copy when running in a terminal."""
 
 
 settings = Settings()
